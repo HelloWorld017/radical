@@ -2,6 +2,7 @@ const app = require('./app');
 const debug = require('debug')('radical:server');
 const fs = require('fs');
 const http = require('http');
+const motion = require('motion-controller');
 
 const port = ((val) => {
 	let port = parseInt(val, 10);
@@ -40,4 +41,9 @@ server.on('listening', () => {
 	let addr = server.address();
 	let bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
 	debug('Listening on ' + bind);
+});
+
+const io = require('socket.io')(server);
+io.on('connection', (socket) => {
+	motion.bindSocket(socket);
 });
