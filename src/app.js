@@ -20,6 +20,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', require('../routes'));
 app.use('/rad', motion.createRouter('init-desktop', 'init-mobile'));
-app.use(express.static('./public', { maxAge: '7d' }));
+app.use(express.static('./public'));
 
 module.exports = app;

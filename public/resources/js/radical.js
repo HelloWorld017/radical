@@ -96,8 +96,6 @@
 			this.listeners = {};
 		}
 
-		set listeners(v){}
-
 		on(listenerName, callback){
 			if(!this.listeners[listenerName]) this.listeners[listenerName] = [];
 
@@ -105,7 +103,6 @@
 		}
 
 		emit(listenerName, ...args){
-			console.log(this);
 			(this.listeners[listenerName] || []).forEach((v) => v(...args));
 		}
 	}
@@ -116,16 +113,24 @@
 			this.gameSetting = {
 				width			: 1280,
 				height			: 720,
+				centerX			: 640,
+				centerY			: 360,
 				creationTick	: 50,
 				hp				: 100,
+				playerRadius	: 75,
+				enemyCOrbit		: 640,
+				advCOrbit		: 360,
 				defaultHp		: 15,
 				defaultDamage	: 10,
+				advDamage		: 20,
 				advPercentage	: 0.1,
-				fireTick		: 200,
-				bulletVelocity	: 50,
-				objectVelocity	: 25,
+				fireTick		: 100,
+				bulletVelocity	: 40,
+				bulletRandom	: 5,
+				objectVelocity	: 15,
+				advVelocity		: 45,
 				maxStage		: 5,
-				stageTime		: 400,
+				stageTime		: 1000,
 				scoreMultiplier	: 1,
 				stageIncreasement: {
 					bulletVelocity	: 5,
@@ -135,7 +140,10 @@
 					defaultDamage	: 3,
 					creationTick	: -5,
 					stageTime		: 200,
-					scoreMultiplier	: 0.2
+					scoreMultiplier	: 0.2,
+					advPercentage	: 0.1,
+					advDamage		: 5,
+					hp				: 10
 				}
 			};
 
@@ -144,6 +152,9 @@
 			this.tick = 0;
 			this.stage = 1;
 			this.score = 0;
+			this.lastId = 0;
+			this.cursorX = 640;
+			this.cursorY = 360;
 
 			this.gameStatus = STATUS_START;
 
@@ -157,13 +168,13 @@
 		}
 
 		neededStageTime(){
-			return 200 * (this.stage + 1);
+			return 800 + 200 * this.stage;
 		}
 
 		nextStage(){
 			this.stage++;
 			this.animationTick = 0;
-			Object.keys(this.gameSetting.stageIncreasement.forEach).forEach((k) => {
+			Object.keys(this.gameSetting.stageIncreasement).forEach((k) => {
 				this.gameSetting[k] += this.gameSetting.stageIncreasement[k];
 			});
 			this.emit('next stage');
@@ -180,7 +191,7 @@
 				return;
 			}
 
-			if(this.tick % this.gameSetting.creationTick === 20){
+			if(this.tick % this.gameSetting.creationTick === 0){
 				this.createEnemy();
 			}
 
@@ -198,22 +209,36 @@
 		createEnemy(){
 			if(this.gameStatus === STATUS_END) return;
 
-			let args = [
-				this,
-				this.gameSetting.defaultHp,
-				Math.round(Math.random() * this.gameSetting.width),
-				this.gameSetting.height,
-				this.gameSetting.defaultDamage
-			];
+			let angle = Math.random() * Math.PI * 2;
 
-			let enemy = new DefaultEnemy(...args);
-			if(Math.random() < this.gameSetting.advPercentage) enemy = new AdvEnemy(...args);
+			let enemy;
+			if(Math.random() < this.gameSetting.advPercentage){
+				let cartesian = Math.toCartesian(this.gameSetting.advCOrbit, angle, this.gameSetting.width / 2, this.gameSetting.height / 2);
+				enemy = new AdvEnemy(
+					this,
+					this.gameSetting.defaultHp,
+					cartesian.x,
+					cartesian.y,
+					this.gameSetting.defaultDamage,
+					angle
+				);
+			}else{
+				let cartesian = Math.toCartesian(this.gameSetting.enemyCOrbit, angle, this.gameSetting.width / 2, this.gameSetting.height / 2);
+				enemy = new DefaultEnemy(
+					this,
+					this.gameSetting.defaultHp,
+					cartesian.x,
+					cartesian.y,
+					this.gameSetting.defaultDamage,
+					angle
+				);
+			}
 
 			this.addGameObject(enemy);
 		}
 
 		renderBackground(){
-			ctx.fillStyle = renderSetting.stageColor[this.stage];
+			/*ctx.fillStyle = renderSetting.stageColor[this.stage];
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
 			ctx.save();
 			ctx.translate(...renderSetting.backgroundSetting.center);
@@ -225,7 +250,7 @@
 				ctx.fillRect(diagonal.yPos, diagonal.xPos, diagonal.width, diagonal.height);
 				diagonal.xPos += renderSetting.backgroundSetting.animationAmount;
 			});
-			ctx.restore();
+			ctx.restore();*/
 		}
 
 		render(){
@@ -247,7 +272,7 @@
 			if(this.gameStatus === STATUS_END) return;
 
 			if(this.gameSetting.hp < 0){
-				gameEnd();
+				this.gameEnd();
 			}
 		}
 
@@ -265,15 +290,12 @@
 	class GameObject{
 		constructor(game, x, y){
 			this.game = game;
-			this.id = game.objects.length;
+			this.id = game.lastId;
+			game.lastId++;
 			this.type = undefined;
 			this.x = x;
 			this.y = y;
 		}
-
-		set id(v){}
-
-		set type(v){}
 
 		update(){}
 	}
@@ -286,6 +308,11 @@
 			this.damage = damage;
 		}
 
+		setDead(){
+			this.game.objects[this.id] = undefined;
+			delete this.game.objects[this.id];
+		}
+
 		getColor(){
 			return renderSetting.defaultColor;
 		}
@@ -293,7 +320,8 @@
 		update(){
 			super.update();
 
-			if(Math.distance(this.x, this.y, this.game.gameSetting.width / 2, this.game.gameSetting.height / 2)){
+			if(Math.distance(this.x, this.y, this.game.gameSetting.width / 2, this.game.gameSetting.height / 2) < this.game.gameSetting.playerRadius){
+				this.setDead();
 				this.game.gameSetting.hp -= this.damage;
 				this.game.emit('damage');
 				this.game.onDamage();
@@ -302,14 +330,11 @@
 	}
 
 	class DefaultEnemy extends Enemy{
-		constructor(...args){
-			super(...args);
-			let centerX = this.game.gameSetting.width / 2;
-			let centerY = this.game.gameSetting.height / 2;
-			let polar = Math.toPolar(this.x, this.y, centerX, centerY);
+		constructor(game, hp, x, y, damage, theta){
+			super(game, hp, x, y, damage);
 			[this.motionX, this.motionY] = [
-				Math.cos(polar.theta) * this.game.gameSetting.objectVelocity,
-				Math.sin(polar.theta) * this.game.gameSetting.objectVelocity
+				Math.cos(theta + Math.PI) * this.game.gameSetting.objectVelocity,
+				Math.sin(theta + Math.PI) * this.game.gameSetting.objectVelocity
 			];
 			this.type = TYPE_DEFAULT;
 		}
@@ -326,9 +351,13 @@
 	}
 
 	class AdvEnemy extends DefaultEnemy{
-		constructor(...args){
-			super(...args);
+		constructor(game, hp, x, y, damage, theta){
+			super(game, hp, x, y, damage, theta);
 			this.type = TYPE_ADV;
+			this.theta = theta;
+			this.motionX = 0;
+			this.motionY = 0;
+			this.innerTick = 0;
 		}
 
 		getColor(){
@@ -340,7 +369,19 @@
 		update(){
 			super.update();
 
-			if(this.game.tick % this.game.gameSetting.fireTick === 0){
+			this.innerTick++;
+			this.theta += Math.PI / this.game.gameSetting.advVelocity;
+
+			let cartesian = Math.toCartesian(
+				this.game.gameSetting.advCOrbit - this.innerTick,
+				this.theta,
+				this.game.gameSetting.centerX,
+				this.game.gameSetting.centerY
+			);
+
+			[this.x, this.y] = [cartesian.x, cartesian.y];
+
+			if(this.innerTick % this.game.gameSetting.fireTick === 0){
 				let angle = Math.round(Math.random() * 90) + 135;
 				let rad = Math.toRad(angle);
 
@@ -370,8 +411,13 @@
 			this.x += this.motionX;
 			this.y += this.motionY;
 
-			if(this.x < 0 || this.x >= gameSetting.width){
+			if(this.x < 0 || this.x >= this.game.gameSetting.width){
 				this.motionX = -this.motionX;
+				this.motionY += Math.random() * this.game.gameSetting.bulletRandom;
+			}
+
+			if(this.y < 0 || this.y >= this.game.gameSetting.height){
+				this.setDead();
 			}
 		}
 	}
