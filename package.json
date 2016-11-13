@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./src/index"
   },
   "dependencies": {
     "body-parser": "~1.15.2",
+    "compression": "^1.6.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",
     "ejs": "~2.5.2",
     "express": "~4.14.0",
     "morgan": "~1.7.0",
-    "motion-controller": "0.0.0",
+    "motion-controller": "^0.0.1",
     "serve-favicon": "~2.3.0",
     "socket.io": "^1.5.1"
   }

@@ -14,7 +14,6 @@ const port = ((val) => {
 
 app.set('port', port);
 
-global.config = require('../server');
 global.server = http.createServer(app);
 
 server.listen(port);
