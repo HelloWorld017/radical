@@ -53,14 +53,32 @@
 	const renderSetting = {
 		defaultEnemyRadius		: 30,
 		bulletColor				: '#03a9f4',
-		defaultColor			: '#ab47bc',
+		defaultColor			: '#757575',
 		lowColor				: '#ef5350',
 		normalColor				: '#ffc107',
 		highColor				: '#4caf50',
 		nextStageAnimationTick 	: 5000,
 		stageColor: {
-			1: ['#751212', '#b71c1c', '1'],
-			2: ['#9a3600', '#e65100', '2'],
+			1: {
+				bg: '#751212',
+				fg: '#b71c1c',
+				bulletColor: '#ffee58',
+				highColor: '#ffc107',
+				normalColor: '#ff9800',
+				lowColor: '#e65100',
+				defaultColor: '#fff59d',
+				text: '1'
+			},
+			2: {
+				bg: '#9a3600',
+				fg: '#e65100',
+				bulletColor: '#ffee58',
+				highColor: '#ffc107',
+				normalColor: '#ffea00',
+				lowColor: '#ffd600',
+				defaultColor: '#880e4f',
+				text: '2'
+			},
 			3: ['#004d40', '#006064', '3'],
 			4: ['#1a237e', '#0d47a1', '4'],
 			5: ['#212121', '#fafafa', '∞']
@@ -71,7 +89,7 @@
 			TYPE_BULLET		: defaultRenderer
 		},
 		backgroundSetting: {
-			animationAmount: 50,
+			animationAmount: 1,
 			size	: temp.size,
 			angle	: Math.toRad(45),
 			center	: [
@@ -116,7 +134,8 @@
 				centerX			: 640,
 				centerY			: 360,
 				creationTick	: 50,
-				hp				: 100,
+				//hp				: 100,
+				hp				: Infinity,
 				playerRadius	: 75,
 				enemyCOrbit		: 640,
 				advCOrbit		: 360,
@@ -238,8 +257,9 @@
 		}
 
 		renderBackground(){
-			/*ctx.fillStyle = renderSetting.stageColor[this.stage];
+			ctx.fillStyle = renderSetting.stageColor[this.stage].bg;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = renderSetting.stageColor[this.stage].fg;
 			ctx.save();
 			ctx.translate(...renderSetting.backgroundSetting.center);
 
@@ -249,8 +269,10 @@
 			renderSetting.background.forEach((diagonal) => {
 				ctx.fillRect(diagonal.yPos, diagonal.xPos, diagonal.width, diagonal.height);
 				diagonal.xPos += renderSetting.backgroundSetting.animationAmount;
+				if(diagonal.xPos > canvas.width + 200)
+					diagonal.xPos = 0;
 			});
-			ctx.restore();*/
+			ctx.restore();
 		}
 
 		render(){
@@ -314,7 +336,7 @@
 		}
 
 		getColor(){
-			return renderSetting.defaultColor;
+			return renderSetting.stageColor[this.game.stage].defaultColor;
 		}
 
 		update(){
@@ -340,7 +362,7 @@
 		}
 
 		getColor(){
-			return renderSetting.defaultColor;
+			return renderSetting.stageColor[this.game.stage].defaultColor;
 		}
 
 		update(){
@@ -361,9 +383,9 @@
 		}
 
 		getColor(){
-			if(this.hp < this.defaultHp / 3) return renderSetting.lowColor;
-			else if(this.hp < this.defaultHp * 2 / 3) return renderSetting.normalColor;
-			else return renderSetting.highColor;
+			if(this.hp < this.defaultHp / 3) return renderSetting.stageColor[this.game.stage].lowColor;
+			else if(this.hp < this.defaultHp * 2 / 3) return renderSetting.stageColor[this.game.stage].normalColor;
+			else return renderSetting.stageColor[this.game.stage].highColor;
 		}
 
 		update(){
@@ -382,15 +404,17 @@
 			[this.x, this.y] = [cartesian.x, cartesian.y];
 
 			if(this.innerTick % this.game.gameSetting.fireTick === 0){
-				let angle = Math.round(Math.random() * 90) + 135;
-				let rad = Math.toRad(angle);
+				for(let i = 0; i < 2; i++){
+					let angle = Math.round(Math.random() * 90) + 135;
+					let rad = Math.toRad(angle);
 
-				let [motionX, motionY] = [
-					Math.cos(rad) * this.game.gameSetting.bulletVelocity,
-					Math.sin(rad) * this.game.gameSetting.bulletVelocity
-				];
+					let [motionX, motionY] = [
+						Math.cos(rad) * this.game.gameSetting.bulletVelocity,
+						Math.sin(rad) * this.game.gameSetting.bulletVelocity
+					];
 
-				this.game.addGameObject(new BulletEntity(this.game, this.x, this.y, motionX, motionY));
+					this.game.addGameObject(new BulletEntity(this.game, this.x, this.y, motionX, motionY));
+				}
 			}
 		}
 	}
@@ -404,7 +428,7 @@
 		}
 
 		getColor(){
-			return renderSetting.bulletColor;
+			return renderSetting.stageColor[this.game.stage].bulletColor;
 		}
 
 		update(){
