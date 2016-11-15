@@ -149,18 +149,21 @@
 				objectVelocity	: 15,
 				advVelocity		: 45,
 				maxStage		: 5,
+				maxCreation		: 3,
 				stageTime		: 1000,
 				scoreMultiplier	: 1,
 				stageIncreasement: {
 					bulletVelocity	: 5,
 					objectVelocity	: 5,
-					fireTick		: -10,
+					advVelocity		: -3,
+					fireTick		: -8,
 					defaultHp		: 2,
 					defaultDamage	: 3,
-					creationTick	: -5,
+					creationTick	: -10,
+					maxCreation		: 1,
 					stageTime		: 200,
 					scoreMultiplier	: 0.2,
-					advPercentage	: 0.1,
+					advPercentage	: 0.05,
 					advDamage		: 5,
 					hp				: 10
 				}
@@ -187,7 +190,7 @@
 		}
 
 		neededStageTime(){
-			return 800 + 200 * this.stage;
+			return this.stage * (1800 + 200 * this.stage) / 2;
 		}
 
 		nextStage(){
@@ -211,7 +214,8 @@
 			}
 
 			if(this.tick % this.gameSetting.creationTick === 0){
-				this.createEnemy();
+				let creationAmount = Math.floor(Math.random() * (this.gameSetting.maxCreation - 1)) + 1;
+				for(let i = 0; i < creationAmount; i++) this.createEnemy();
 			}
 
 			Object.values(this.objects).forEach((v) => {
@@ -432,6 +436,7 @@
 		}
 
 		update(){
+			super.update();
 			this.x += this.motionX;
 			this.y += this.motionY;
 
