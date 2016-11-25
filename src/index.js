@@ -1,3 +1,4 @@
+'use strict';
 const app = require('./app');
 const debug = require('debug')('radical:server');
 const fs = require('fs');

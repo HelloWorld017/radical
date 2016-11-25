@@ -60,28 +60,55 @@
 		nextStageAnimationTick 	: 5000,
 		stageColor: {
 			1: {
-				bg: '#751212',
-				fg: '#b71c1c',
-				bulletColor: '#ffee58',
-				highColor: '#ffc107',
-				normalColor: '#ff9800',
-				lowColor: '#e65100',
+				bg			: '#751212',
+				fg			: '#b71c1c',
+				bulletColor	: '#ffee58',
+				highColor	: '#ffc107',
+				normalColor	: '#ff9800',
+				lowColor	: '#e65100',
 				defaultColor: '#fff59d',
-				text: '1'
+				text		: '1'
 			},
 			2: {
-				bg: '#9a3600',
-				fg: '#e65100',
-				bulletColor: '#ffee58',
-				highColor: '#ffc107',
-				normalColor: '#ffea00',
-				lowColor: '#ffd600',
+				bg			: '#9a3600',
+				fg			: '#e65100',
+				bulletColor	: '#ffee58',
+				highColor	: '#ffc107',
+				normalColor	: '#ffd600',
+				lowColor	: '#ffea00',
 				defaultColor: '#880e4f',
-				text: '2'
+				text		: '2'
 			},
-			3: ['#004d40', '#006064', '3'],
-			4: ['#1a237e', '#0d47a1', '4'],
-			5: ['#212121', '#fafafa', '∞']
+			3: {
+				bg			: '#004d40',
+				fg			: '#006064',
+				bulletColor	: '#1de9b6',
+				highColor	: '#80cbc4',
+				normalColor	: '#64ffda',
+				lowColor	: '#b2dfdb',
+				defaultColor: '#a7ffeb',
+				text		: '3'
+			},
+			4: {
+				bg			: '#1a237e',
+				fg			: '#0d47a1',
+				bulletColor	: '#80deea',
+				highColor	: '#00bcd4',
+				normalColor	: '#26c6da',
+				lowColor	: '#00bcd4',
+				defaultColor: '#84ffff',
+				text		: '4'
+			},
+			5: {
+				bg			: '#212121',
+				fg			: '#424242',
+				bulletColor	: '#757575',
+				highColor	: '#fafafa',
+				normalColor	: '#c5c5c5',
+				lowColor	: '#a0a0a0',
+				defaultColor: '#8e8e8e',
+				text		: '∞'
+			}
 		},
 		renderer: {
 			TYPE_DEFAULT	: defaultRenderer,
@@ -171,6 +198,7 @@
 
 			this.animationTick = 0;
 			this.objects = {};
+			this.animations = {};
 			this.tick = 0;
 			this.stage = 1;
 			this.score = 0;
@@ -451,6 +479,10 @@
 		}
 	}
 
-	let game = new Game;
-	game.gameStart();
+	let game;
+
+	$('#funny-thing').addEventListener('click', () => {
+		game = new Game;
+		game.gameStart();
+	});
 //})();
