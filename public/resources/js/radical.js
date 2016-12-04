@@ -26,9 +26,14 @@
 
 	const $ = (...args) => document.querySelector(...args);
 
+	const WIDTH = 1680;
+	const HEIGHT = 1050;
+
 	const canvas = $('canvas');
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+	//canvas.width = window.innerWidth;
+	//canvas.height = window.innerHeight;
+	canvas.width = WIDTH;
+	canvas.height = HEIGHT;
 
 	const ctx = canvas.getContext('2d');
 
@@ -43,15 +48,14 @@
 	const defaultRenderer = (object) => {
 		ctx.fillStyle = object.getColor();
 		ctx.beginPath();
-		ctx.arc(object.x, object.y, remderSetting.defaultEnemyRadius);
-		ctx.closePath();
+		ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2);
+		ctx.fill();
 	};
 
 	const temp = {};
 	temp.size = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2)) + 50;
 
 	const renderSetting = {
-		defaultEnemyRadius		: 30,
 		bulletColor				: '#03a9f4',
 		defaultColor			: '#757575',
 		lowColor				: '#ef5350',
@@ -60,70 +64,70 @@
 		nextStageAnimationTick 	: 5000,
 		stageColor: {
 			1: {
-				bg			: '#751212',
-				fg			: '#b71c1c',
-				bulletColor	: '#ffee58',
-				highColor	: '#ffc107',
-				normalColor	: '#ff9800',
-				lowColor	: '#e65100',
-				defaultColor: '#fff59d',
-				text		: '1'
+				bg				: '#751212',
+				fg				: '#b71c1c',
+				bulletColor		: '#ffee58',
+				highColor		: '#ffc107',
+				normalColor		: '#ff9800',
+				lowColor		: '#e65100',
+				defaultColor	: '#fff59d',
+				text			: '1'
 			},
 			2: {
-				bg			: '#9a3600',
-				fg			: '#e65100',
-				bulletColor	: '#ffee58',
-				highColor	: '#ffc107',
-				normalColor	: '#ffd600',
-				lowColor	: '#ffea00',
-				defaultColor: '#880e4f',
-				text		: '2'
+				bg				: '#9a3600',
+				fg				: '#e65100',
+				bulletColor		: '#ffee58',
+				highColor		: '#ffc107',
+				normalColor		: '#ffd600',
+				lowColor		: '#ffea00',
+				defaultColor	: '#880e4f',
+				text			: '2'
 			},
 			3: {
-				bg			: '#004d40',
-				fg			: '#006064',
-				bulletColor	: '#1de9b6',
-				highColor	: '#80cbc4',
-				normalColor	: '#64ffda',
-				lowColor	: '#b2dfdb',
-				defaultColor: '#a7ffeb',
-				text		: '3'
+				bg				: '#004d40',
+				fg				: '#006064',
+				bulletColor		: '#1de9b6',
+				highColor		: '#80cbc4',
+				normalColor		: '#64ffda',
+				lowColor		: '#b2dfdb',
+				defaultColor	: '#a7ffeb',
+				text			: '3'
 			},
 			4: {
-				bg			: '#1a237e',
-				fg			: '#0d47a1',
-				bulletColor	: '#80deea',
-				highColor	: '#00bcd4',
-				normalColor	: '#26c6da',
-				lowColor	: '#00bcd4',
-				defaultColor: '#84ffff',
-				text		: '4'
+				bg				: '#1a237e',
+				fg				: '#0d47a1',
+				bulletColor		: '#80deea',
+				highColor		: '#00bcd4',
+				normalColor		: '#26c6da',
+				lowColor		: '#00bcd4',
+				defaultColor	: '#84ffff',
+				text			: '4'
 			},
 			5: {
-				bg			: '#212121',
-				fg			: '#424242',
-				bulletColor	: '#757575',
-				highColor	: '#fafafa',
-				normalColor	: '#c5c5c5',
-				lowColor	: '#a0a0a0',
-				defaultColor: '#8e8e8e',
-				text		: '∞'
+				bg				: '#212121',
+				fg				: '#424242',
+				bulletColor		: '#757575',
+				highColor		: '#fafafa',
+				normalColor		: '#c5c5c5',
+				lowColor		: '#a0a0a0',
+				defaultColor	: '#8e8e8e',
+				text			: '∞'
 			}
 		},
 		renderer: {
-			TYPE_DEFAULT	: defaultRenderer,
-			TYPE_ADV		: defaultRenderer,
-			TYPE_BULLET		: defaultRenderer
+			0					: defaultRenderer,
+			1					: defaultRenderer,
+			2					: defaultRenderer
 		},
 		backgroundSetting: {
-			animationAmount: 1,
-			size	: temp.size,
-			angle	: Math.toRad(45),
-			center	: [
+			animationAmount		: 1,
+			size				: temp.size,
+			angle				: Math.toRad(45),
+			center				: [
 				(canvas.width - temp.size) / 2,
 				(canvas.height - temp.size) / 2
 			],
-			halfSize: temp.size / 2
+			halfSize			: temp.size / 2
 		},
 		background	: [...Array(Math.ceil(temp.size / 100))].map((v, k) => k * 100).map((i) => {
 			return {
@@ -156,13 +160,14 @@
 		constructor(){
 			super();
 			this.gameSetting = {
-				width			: 1280,
-				height			: 720,
-				centerX			: 640,
-				centerY			: 360,
+				score			: 0,
+				width			: WIDTH,
+				height			: HEIGHT,
+				centerX			: WIDTH / 2,
+				centerY			: HEIGHT / 2,
 				creationTick	: 50,
-				//hp				: 100,
-				hp				: Infinity,
+				hp				: 1000,
+				enemyRadius		: 30,
 				playerRadius	: 75,
 				enemyCOrbit		: 640,
 				advCOrbit		: 360,
@@ -171,6 +176,7 @@
 				advDamage		: 20,
 				advPercentage	: 0.1,
 				fireTick		: 100,
+				fireAmount		: 1,
 				bulletVelocity	: 40,
 				bulletRandom	: 5,
 				objectVelocity	: 15,
@@ -179,11 +185,19 @@
 				maxCreation		: 3,
 				stageTime		: 1000,
 				scoreMultiplier	: 1,
+				userFireTick	: 2,
+				userDamage		: 5,
+				scores			: {
+					0			: 10,
+					1			: 20,
+					3			: 3
+				},
+				misshotScore	: -2,
 				stageIncreasement: {
-					bulletVelocity	: 5,
-					objectVelocity	: 5,
+					bulletVelocity	: 1,
+					objectVelocity	: 2,
 					advVelocity		: -3,
-					fireTick		: -8,
+					fireTick		: -5,
 					defaultHp		: 2,
 					defaultDamage	: 3,
 					creationTick	: -10,
@@ -192,7 +206,14 @@
 					scoreMultiplier	: 0.2,
 					advPercentage	: 0.05,
 					advDamage		: 5,
-					hp				: 10
+					hp				: 1000,
+					fireAmount		: 1,
+					playerRadius	: 5,
+					enemyRadius		: -2,
+					score: 100
+				},
+				maximum: {
+					fireAmount : 4
 				}
 			};
 
@@ -205,6 +226,8 @@
 			this.lastId = 0;
 			this.cursorX = 640;
 			this.cursorY = 360;
+			this.lastFire = 0;
+			this.isFiring = false;
 
 			this.gameStatus = STATUS_START;
 
@@ -218,7 +241,7 @@
 		}
 
 		neededStageTime(){
-			return this.stage * (1800 + 200 * this.stage) / 2;
+			return this.stage * (1400 + 300 * this.stage) / 2;
 		}
 
 		nextStage(){
@@ -226,6 +249,9 @@
 			this.animationTick = 0;
 			Object.keys(this.gameSetting.stageIncreasement).forEach((k) => {
 				this.gameSetting[k] += this.gameSetting.stageIncreasement[k];
+			});
+			Object.keys(this.gameSetting.maximum).forEach((k) => {
+				this.gameSetting[k] = Math.min(this.gameSetting[k], this.gameSetting.maximum[k]);
 			});
 			this.emit('next stage');
 		}
@@ -307,17 +333,85 @@
 			ctx.restore();
 		}
 
+		onFire(){
+			this.isFiring = true;
+		}
+
+		releaseFire(){
+			this.isFiring = false;
+		}
+
+		handleFire(){
+			Object.values(this.objects).every((v) => {
+				if(Math.distance(v.x, v.y, this.cursorX, this.cursorY) < v.radius){
+					v.hp -= this.gameSetting.userDamage;
+					if(v.hp <= 0){
+						this.gameSetting.score += this.gameSetting.scores[v.type] * this.gameSetting.scoreMultiplier;
+						return v.setDead();
+					}
+
+					return false;
+				}
+				return true;
+			});
+		}
+
+		renderHP(){
+			ctx.font = "50px MUSECA";
+			ctx.fillStyle = renderSetting.stageColor[this.stage].defaultColor;
+			ctx.textAlign = 'right';
+			ctx.fillText(`HP ${this.gameSetting.hp}`, canvas.width - 200, canvas.height - 50);
+		}
+
+		renderScore(){
+			ctx.font = "30px MUSECA";
+			ctx.fillStyle = renderSetting.stageColor[this.stage].highColor;
+			ctx.textAlign = 'right';
+			ctx.fillText(`SCORE ${this.gameSetting.score}`, canvas.width - 200, canvas.height - 105);
+		}
+
+		renderStage(){
+			ctx.font = "30px MUSECA";
+			ctx.fillStyle = renderSetting.stageColor[this.stage].bulletColor;
+			ctx.textAlign = 'right';
+			ctx.fillText(`STAGE ${this.stage} (x${this.gameSetting.scoreMultiplier})`, canvas.width - 200, canvas.height - 140);
+		}
+
+		renderAmmo(){
+
+		}
+
+		renderCrossHair(){
+			ctx.beginPath();
+			ctx.arc(this.cursorX, this.cursorY, 1, 0, Math.PI * 2);
+			ctx.fill();
+			ctx.beginPath();
+			ctx.arc(this.cursorX, this.cursorY, 25, 0, Math.PI * 2);
+			ctx.stroke();
+		}
+
+		renderJudgeline(){
+			ctx.beginPath();
+			ctx.arc(this.gameSetting.centerX, this.gameSetting.centerY, this.gameSetting.playerRadius, 0, Math.PI * 2);
+			ctx.stroke();
+		}
+
+		renderHUD(){
+			this.renderHP();
+			this.renderAmmo();
+			this.renderScore();
+			this.renderStage();
+			this.renderCrossHair();
+			this.renderJudgeline();
+		}
+
 		render(){
 			if(this.gameStatus === STATUS_END) return;
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			this.renderBackground();
-			Object.values(this.objects).forEach((v) => {
-				ctx.fillStyle = v.getColor();
-				ctx.beginPath();
-				ctx.arc(v.x, v.y, renderSetting.defaultEnemyRadius, 0, 2 * Math.PI);
-				ctx.fill();
-			});
+			Object.values(this.objects).forEach((v) => renderSetting.renderer[v.type](v));
+			this.renderHUD();
 
 			requestAnimationFrame(this.renderHandler);
 		}
@@ -325,7 +419,7 @@
 		onDamage(){
 			if(this.gameStatus === STATUS_END) return;
 
-			if(this.gameSetting.hp < 0){
+			if(this.gameSetting.hp <= 0){
 				this.gameEnd();
 			}
 		}
@@ -360,6 +454,7 @@
 			this.hp = hp;
 			this.defaultHp = hp;
 			this.damage = damage;
+			this.radius = game.gameSetting.enemyRadius;
 		}
 
 		setDead(){
@@ -373,6 +468,8 @@
 
 		update(){
 			super.update();
+
+			if(this.hp <= 0) return this.setDead();
 
 			if(Math.distance(this.x, this.y, this.game.gameSetting.width / 2, this.game.gameSetting.height / 2) < this.game.gameSetting.playerRadius){
 				this.setDead();
@@ -436,7 +533,7 @@
 			[this.x, this.y] = [cartesian.x, cartesian.y];
 
 			if(this.innerTick % this.game.gameSetting.fireTick === 0){
-				for(let i = 0; i < 2; i++){
+				for(let i = 0; i < this.game.gameSetting.fireAmount; i++){
 					let angle = Math.round(Math.random() * 90) + 135;
 					let rad = Math.toRad(angle);
 
@@ -453,7 +550,7 @@
 
 	class BulletEntity extends Enemy{
 		constructor(game, x, y, motionX, motionY){
-			super(game, 1, x, y);
+			super(game, 1, x, y, game.gameSetting.advDamage);
 			this.motionX = motionX;
 			this.motionY = motionY;
 			this.type = TYPE_BULLET;
@@ -479,10 +576,6 @@
 		}
 	}
 
-	let game;
-
-	$('#funny-thing').addEventListener('click', () => {
-		game = new Game;
-		game.gameStart();
-	});
+	let game = new Game;
+	game.gameStart();
 //})();
