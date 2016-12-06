@@ -1,81 +1,69 @@
+class ParticleSystem{
+	constructor(gcTick){
+		this.particles = [];
+		this.gcTick = gcTick || 5000;
+	}
+
+	update(){
+		this.particles.forEach((v) => v.update);
+	}
+
+	garbageCollect(){
+		this.particles = this.particles.filter((v) => v.life >= v.current);
+		setTimeout(this.garbageCollect, gcTick);
+	}
+
+	renderParticle(context){
+		this.particles.forEach((v) => if(v.life >= v.current) v.render(context));
+	}
+}
+
 class Particle{
-	constructor(configs){
-		//TODO
+	constructor(options){
+		this.life = options.life || 0;
+		this.current = 0;
+		this.onFinish = options.onFinish || function(){};
 	}
-}
-var Particle = function(x, y, sizeX, sizeY, life, color, reduceX, reduceY, motionX, motionY){
-	this.x = x;
-	this.y = y;
-	this.sizeX = (sizeX === undefined) ? 50 : sizeX;
-	this.sizeY = (sizeY  === undefined) ? this.sizeX : sizeY;
-	this.current = 0;
-	this.life = (life === undefined) ? 100 : life;
 
-	this.color = color || "#000";
-	this.reduceX  = reduceX || 0;
-	this.reduceY = (reduceY === undefined) ? this.reduceX : reduceY;
-	this.motionX = motionX || 0;
-	this.motionY = motionY || 0;
-
-	this.render = Particle.defaultRender(this);
-
-	this.doUpdate = function(_this){
-		_this.sizeX = Math.max(0, _this.sizeX - _this.reduceX);
-		_this.sizeY = Math.max(0, _this.sizeY - _this.reduceY);
-		_this.x += _this.motionX;
-		_this.y += _this.motionY;
-	};
-};
-
-Particle.prototype.update = function(){
-	if(this.current <= this.life){
+	update(){
 		this.current++;
-		this.doUpdate(this);
+		if(this.life < this.current){
+			this.onFinish();
+			return;
+		}
 	}
-};
 
-Particle.defaultRender = function(v){
-	return function(ctx){
-		ctx.fillStyle = v.color;
+	render(context){}
+}
 
+class CircleParticle{
+	constructor(options){
+		super(options);
+		this.life = options.life || 200;
+		this.x = options.x || 0;
+		this.y = options.y || 0;
+		this.size = options.size || 10;
+		this.motionX = options.motionX || 0;
+		this.motionY = options.motionY || 0;
+		this.motionSize = options.motionSize || -0.05;
+		this.color = options.color || '#000';
+	}
+
+	update(){
+		super.update();
+		this.x += this.motionX;
+		this.y += this.motionY:
+		this.size -= this.motionSize;
+		this.motionX = Math.sign(this.motionX) * Math.max(0, Math.abs(this.motionX) - 0.1);
+		this.motionY -= 0.1;
+	}
+
+	render(ctx){
+		ctx.fillStyle = this.color;
 		ctx.beginPath();
-		ctx.ellipse(v.x, v.y, v.sizeX, v.sizeY, 0, 0, Math.PI * 2);
+		ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 		ctx.fill();
-	};
-};
-
-Particle.custom = function(x, y, sizeX, sizeY, life, color, init, update, render){
-	this.x = x;
-	this.y = y;
-	this.sizeX = sizeX;
-	this.sizeY = sizeY;
-	this.current = 0;
-	this.life = (life === undefined) ? 100 : life;
-	this.color = color;
-	this.doUpdate = update;
-	this.render = render || Particle.defaultRender(this);
-	init(this);
-};
-
-Particle.update = function(){
-	particles.forEach(function(v){
-		v.update();
-	});
-};
-
-Particle.custom.prototype.update = Particle.prototype.update;
-
-var particles = [];
-
-Particle.garbageCollect = function(){
-	particles = particles.filter(function(v){
-		return v.life > v.current;
-	});
-	setTimeout(Particle.garbageCollect, 5000);
+	}
 }
 
-Particle.renderParticle = function(ctx){
-	particles.forEach(function(v){
-		v.render(ctx, v);
-	});
-}
+export ParticleSystem, Particle, CircleParticle;
