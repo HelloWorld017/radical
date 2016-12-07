@@ -239,9 +239,7 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 				}
 			};
 
-			this.animationTick = 0;
 			this.objects = {};
-			this.animations = {};
 			this.tick = 0;
 			this.stage = 1;
 			this.score = 0;
@@ -250,6 +248,7 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 			this.cursorY = 360;
 			this.isFiring = false;
 			this.preHP = 0;
+			this.particles = new ParticleSystem();
 
 			this.gameStatus = STATUS_START;
 
@@ -307,6 +306,8 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 			Object.values(this.objects).forEach((v) => {
 				v.update();
 			});
+
+			this.particles.update();
 			setTimeout(this.tickHandler, 50);
 		}
 
@@ -460,6 +461,7 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			this.renderBackground();
+			this.particles.renderParticle(ctx);
 			Object.values(this.objects).forEach((v) => renderSetting.renderer[v.type](v));
 			this.renderHUD();
 
@@ -482,6 +484,47 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 
 		gameEnd(){
 			this.gameStatus = STATUS_END;
+		}
+	}
+
+	class DestructionAnimation{
+		constructor(object){
+			this.x = object.x;
+			this.y = object.y;
+			this.radius = object.radius;
+			this.color = object.getColor();
+			this.game = object.game;
+		}
+
+		play(){
+			this.game.particles.registerParticle(new CircleParticle({
+				life: 20,
+				color: this.color,
+				x: this.x,
+				y: this.y,
+				size: this.radius,
+				motionSize: this.radius / 20,
+				motionX: 0,
+				motionY: 0,
+				still: true,
+				onFinish: () => {
+					for(let i = 0; i < 15; i++){
+						let particle = new CircleParticle({
+							life: 20,
+							color: this.color,
+							x: this.x,
+							y: this.y,
+							size: this.radius / 5,
+							motionSize: this.radius / 100,
+							motionX: Math.random() * 2 - 1,
+							motionY: Math.random() * 2 - 1,
+							still: false
+						});
+
+						this.game.particles.registerParticle(particle);
+					}
+				}
+			}));
 		}
 	}
 
@@ -508,6 +551,7 @@ import {ParticleSystem, Particle, CircleParticle} from "./particle.js";
 		}
 
 		setDead(){
+			new DestructionAnimation(this).play();
 			this.game.objects[this.id] = undefined;
 			delete this.game.objects[this.id];
 		}

@@ -9,7 +9,7 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const motion = require('motion-controller');
 
-let app = express();
+const app = express();
 app.set('view engine', 'ejs');
 app.set('port', process.env.PORT || '3000');
 
@@ -21,6 +21,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use('/', require('../routes'));
 app.use('/rad', motion.createRouter('init-desktop', 'init-mobile'));
-app.use(express.static('./public'));
+app.use(express.static('./dist'));
 
 module.exports = app;

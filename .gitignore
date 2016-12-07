@@ -30,3 +30,6 @@ node_modules
 npm-debug.log
 
 server.json
+
+#Webpack generated folder
+dist
