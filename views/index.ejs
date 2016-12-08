@@ -1,9 +1,19 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<%- include('header', {title: 'radical.index'}) %>
 	</head>
 	<body>
 		<canvas style="position: fixed; top: 0; left: 0; width: 100vw"></canvas>
-		<script src="/radical.bundle.js"></script>
+
+		<section class="stage-indicator">
+			<header class="stage-header">
+				모바일과 연동을 진행해주세요!
+			</header>
+
+			<div class="stage-desc">
+			</div>
+		</section>
+		<script src="/js/radical-desktop.bundle.js"></script>
 	</body>
 </html>

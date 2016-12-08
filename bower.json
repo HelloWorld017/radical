@@ -1,0 +1,21 @@
+{
+  "name": "radical",
+  "description": "A motion-controlled webgame",
+  "main": "src/index.js",
+  "authors": [
+    "HelloWorld017 <deu07115@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "motion",
+    "game"
+  ],
+  "homepage": "https://github.com/HelloWorld017/radical",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

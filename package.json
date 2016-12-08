@@ -17,12 +17,13 @@
     "morgan": "~1.7.0",
     "motion-controller": "^0.0.1",
     "serve-favicon": "~2.3.0",
-    "socket.io": "^1.5.1"
+    "socket.io": "^1.7.1"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.8",
     "babel-preset-es2015": "^6.18.0",
+    "copy-webpack-plugin": "^4.0.1",
     "webpack": "^1.14.0"
   }
 }

@@ -65,7 +65,7 @@ class CircleParticle extends Particle{
 		this.y += this.motionY;
 		this.size -= this.motionSize;
 		if(!this.still){
-			this.motionX = Math.sign(this.motionX) * Math.max(0, Math.abs(this.motionX) - 0.1);
+			this.motionX = Math.sign(this.motionX) * Math.max(0, Math.abs(this.motionX) - 0.025);
 			this.motionY += 0.1;
 		}
 	}

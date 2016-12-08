@@ -19,8 +19,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use('/', require('../routes'));
-app.use('/rad', motion.createRouter('init-desktop', 'init-mobile'));
+app.use('*', motion.createRouter('index', 'index-mobile'));
 app.use(express.static('./dist'));
 
 module.exports = app;

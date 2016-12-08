@@ -1,0 +1,14 @@
+/*
+	Museca font immitated by @shiftpsh
+	Available on http://shiftpsh.com/220600997910
+*/
+
+@font-face {
+	font-family: 'MUSECA';
+	src:	url('../font/museca.eot?#iefix') format('embedded-opentype'),
+			url('../font/museca.woff') format('woff'),
+			url('../font/museca.ttf') format('truetype'),
+			url('../font/museca.svg#MUSECA') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

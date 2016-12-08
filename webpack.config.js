@@ -1,15 +1,20 @@
 const path = require('path');
-//const webpack = require('webpack');
+const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 
 module.exports = {
-	entry: [
-		'babel-polyfill',
-		path.resolve(__dirname, "app", "js", "radical.js")
-	],
+	entry: {
+		mobile: ['babel-polyfill'],
+		desktop: [
+			'babel-polyfill',
+			path.resolve(__dirname, "app", "js", "index-desktop.js")
+		]
+	},
 
 	output: {
-	  	path: path.resolve(__dirname, "dist"),
-		filename: "radical.bundle.js"
+	  	path: path.resolve(__dirname, 'dist', 'js'),
+		filename: "radical-[name].bundle.js"
 	},
 
 	module: {
@@ -21,6 +26,16 @@ module.exports = {
 	},
 
 	plugins: [
-		//new webpack.optimize.UglifyJsPlugin({minimize: true})
+		new UglifyJsPlugin({minimize: true}),
+		new CopyWebpackPlugin([
+			{
+				from: path.resolve(__dirname, 'app', 'css'),
+				to: path.resolve(__dirname, 'dist', 'css')
+			},
+			{
+				from: path.resolve(__dirname, 'app', 'font'),
+				to: path.resolve(__dirname, 'dist', 'font')
+			}
+		])
 	]
 };
