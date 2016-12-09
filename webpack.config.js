@@ -5,16 +5,19 @@ const UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
 
 module.exports = {
 	entry: {
-		mobile: ['babel-polyfill'],
+		mobile: [
+			'babel-polyfill',
+			path.resolve(__dirname, 'app', 'js', 'index-mobile.js')
+		],
 		desktop: [
 			'babel-polyfill',
-			path.resolve(__dirname, "app", "js", "index-desktop.js")
+			path.resolve(__dirname, 'app', 'js', 'index-desktop.js')
 		]
 	},
 
 	output: {
 	  	path: path.resolve(__dirname, 'dist', 'js'),
-		filename: "radical-[name].bundle.js"
+		filename: 'radical-[name].bundle.js'
 	},
 
 	module: {

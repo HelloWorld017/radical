@@ -346,7 +346,8 @@ class Game extends EventEmitter{
 	}
 
 	useController(controllerName){
-		controllers[controllerName].link(this);
+		if(typeof controllerName === 'object' && controllerName.link) controllerName.link(this);
+		else if(controllers[controllerName]) controllers[controllerName].link(this);
 	}
 
 	onFire(){
