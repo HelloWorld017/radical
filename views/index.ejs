@@ -2,13 +2,30 @@
 <html>
 	<head>
 		<%- include('header', {title: 'radical.index'}) %>
+		<link rel="stylesheet" href="/NanumBarunGothic/nanumbarungothic.css"></script>
+		<link rel="stylesheet" href="/css/index.css"></script>
 	</head>
 	<body>
-		<canvas style="position: fixed; top: 0; left: 0; width: 100vw"></canvas>
+		<canvas style="position: fixed; top: 0; left: 0; width: 100vw" id="playground"></canvas>
+
+		<section class="index-view">
+			<div class="background">
+				<object data="/img/logo.svg" type="image/svg+xml" class="logo-view">
+					<h1>RADICAL</h1>
+				</object>
+
+				<div class="messagebox">
+					<h3>모바일과의 연동을 진행해주세요!</h3>
+					<br>
+					자신의 스마트폰에서 아래의 링크를 입력하시면 됩니다.
+					<div class="auth-link">
+					</div>
+				</div>
+			</div>
+		</section>
 
 		<section class="stage-indicator">
 			<header class="stage-header">
-				모바일과 연동을 진행해주세요!
 			</header>
 
 			<div class="stage-desc">

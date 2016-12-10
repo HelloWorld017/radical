@@ -38,6 +38,10 @@ module.exports = {
 			{
 				from: path.resolve(__dirname, 'app', 'font'),
 				to: path.resolve(__dirname, 'dist', 'font')
+			},
+			{
+				from: path.resolve(__dirname, 'app', 'img'),
+				to: path.resolve(__dirname, 'dist', 'img')
 			}
 		])
 	]

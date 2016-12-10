@@ -29,14 +29,6 @@ const $ = (...args) => document.querySelector(...args);
 const WIDTH = 1680;
 const HEIGHT = 1050;
 
-const canvas = $('canvas');
-//canvas.width = window.innerWidth;
-//canvas.height = window.innerHeight;
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
-
-const ctx = canvas.getContext('2d');
-
 const STATUS_START = 0;
 const STATUS_INGAME = 1;
 const STATUS_END = 2;
@@ -63,14 +55,14 @@ const controllers = {
 };
 
 const defaultRenderer = (object) => {
-	ctx.fillStyle = object.getColor();
-	ctx.beginPath();
-	ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2);
-	ctx.fill();
+	object.game.ctx.fillStyle = object.getColor();
+	object.game.ctx.beginPath();
+	object.game.ctx.arc(object.x, object.y, object.radius, 0, Math.PI * 2);
+	object.game.ctx.fill();
 };
 
 const temp = {};
-temp.size = Math.sqrt(Math.pow(canvas.width, 2) + Math.pow(canvas.height, 2)) + 50;
+temp.size = Math.sqrt(Math.pow(WIDTH, 2) + Math.pow(HEIGHT, 2)) + 50;
 
 const renderSetting = {
 	bulletColor				: '#03a9f4',
@@ -142,8 +134,8 @@ const renderSetting = {
 		size				: temp.size,
 		angle				: Math.toRad(45),
 		center				: [
-			(canvas.width - temp.size) / 2,
-			(canvas.height - temp.size) / 2
+			(WIDTH - temp.size) / 2,
+			(HEIGHT - temp.size) / 2
 		],
 		halfSize			: temp.size / 2
 	},
@@ -175,8 +167,18 @@ class EventEmitter{
 }
 
 class Game extends EventEmitter{
-	constructor(){
+	constructor(canvas, noDrawHud){
 		super();
+
+		this.noDrawHud = noDrawHud;
+		this.canvas = canvas;
+		//canvas.width = window.innerWidth;
+		//canvas.height = window.innerHeight;
+		this.canvas.width = WIDTH;
+		this.canvas.height = HEIGHT;
+
+		this.ctx = this.canvas.getContext('2d');
+
 		this.gameSetting = {
 			score			: 0,
 			width			: WIDTH,
@@ -374,42 +376,42 @@ class Game extends EventEmitter{
 	}
 
 	renderBackground(){
-		ctx.fillStyle = renderSetting.stageColor[this.stage].bg;
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = renderSetting.stageColor[this.stage].fg;
-		ctx.save();
-		ctx.translate(...renderSetting.backgroundSetting.center);
+		this.ctx.fillStyle = renderSetting.stageColor[this.stage].bg;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.fillStyle = renderSetting.stageColor[this.stage].fg;
+		this.ctx.save();
+		this.ctx.translate(...renderSetting.backgroundSetting.center);
 
-		ctx.translate(renderSetting.backgroundSetting.halfSize, renderSetting.backgroundSetting.halfSize);
-		ctx.rotate(renderSetting.backgroundSetting.angle);
-		ctx.translate(-renderSetting.backgroundSetting.halfSize, -renderSetting.backgroundSetting.halfSize);
+		this.ctx.translate(renderSetting.backgroundSetting.halfSize, renderSetting.backgroundSetting.halfSize);
+		this.ctx.rotate(renderSetting.backgroundSetting.angle);
+		this.ctx.translate(-renderSetting.backgroundSetting.halfSize, -renderSetting.backgroundSetting.halfSize);
 		renderSetting.background.forEach((diagonal) => {
-			ctx.fillRect(diagonal.yPos, diagonal.xPos, diagonal.width, diagonal.height);
+			this.ctx.fillRect(diagonal.yPos, diagonal.xPos, diagonal.width, diagonal.height);
 			diagonal.xPos += renderSetting.backgroundSetting.animationAmount;
-			if(diagonal.xPos > canvas.width + 325)
+			if(diagonal.xPos > this.canvas.width + 325)
 				diagonal.xPos = 0;
 		});
-		ctx.restore();
+		this.ctx.restore();
 	}
 
 	renderHP(){
-		ctx.font = "50px MUSECA";
-		ctx.fillStyle = renderSetting.stageColor[this.stage].defaultColor;
-		ctx.textAlign = 'right';
-		ctx.fillText(`HP ${this.gameSetting.hp}`, canvas.width - 200, canvas.height - 50);
+		this.ctx.font = "50px MUSECA";
+		this.ctx.fillStyle = renderSetting.stageColor[this.stage].defaultColor;
+		this.ctx.textAlign = 'right';
+		this.ctx.fillText(`HP ${this.gameSetting.hp}`, this.canvas.width - 200, this.canvas.height - 50);
 	}
 
 	renderScore(){
-		ctx.font = "30px MUSECA";
-		ctx.fillStyle = renderSetting.stageColor[this.stage].highColor;
-		ctx.textAlign = 'right';
-		ctx.fillText(`SCORE ${Math.round(this.gameSetting.score)}`, canvas.width - 200, canvas.height - 105);
+		this.ctx.font = "30px MUSECA";
+		this.ctx.fillStyle = renderSetting.stageColor[this.stage].highColor;
+		this.ctx.textAlign = 'right';
+		this.ctx.fillText(`SCORE ${Math.round(this.gameSetting.score)}`, this.canvas.width - 200, this.canvas.height - 105);
 	}
 
 	renderStage(){
-		ctx.font = "30px MUSECA";
-		ctx.fillStyle = renderSetting.stageColor[this.stage].bulletColor;
-		ctx.textAlign = 'right';
+		this.ctx.font = "30px MUSECA";
+		this.ctx.fillStyle = renderSetting.stageColor[this.stage].bulletColor;
+		this.ctx.textAlign = 'right';
 		let leftText;
 		if(this.stage !== 5){
 			let leftSecond = Math.floor((this.neededStageTime() - this.tick) / 20);
@@ -417,9 +419,9 @@ class Game extends EventEmitter{
 			if(leftCalculatedSecond.length === 1) leftCalculatedSecond = "0" + leftCalculatedSecond;
 			leftText = `${Math.floor(leftSecond / 60)}:${leftCalculatedSecond}`;
 		}else leftText = 'Infinity';
-		ctx.fillText(
+		this.ctx.fillText(
 			`STAGE ${renderSetting.stageColor[this.stage].text} (x${Math.round(this.gameSetting.scoreMultiplier * 10) / 10})`
-			+ ` LEFT ${leftText}`, canvas.width - 200, canvas.height - 140
+			+ ` LEFT ${leftText}`, this.canvas.width - 200, this.canvas.height - 140
 		);
 	}
 
@@ -427,23 +429,23 @@ class Game extends EventEmitter{
 	}*/
 
 	renderCrossHair(){
-		ctx.beginPath();
-		ctx.arc(this.cursorX, this.cursorY, 1, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.beginPath();
-		ctx.arc(this.cursorX, this.cursorY, this.gameSetting.fireRadius, 0, Math.PI * 2);
-		ctx.stroke();
+		this.ctx.beginPath();
+		this.ctx.arc(this.cursorX, this.cursorY, 1, 0, Math.PI * 2);
+		this.ctx.fill();
+		this.ctx.beginPath();
+		this.ctx.arc(this.cursorX, this.cursorY, this.gameSetting.fireRadius, 0, Math.PI * 2);
+		this.ctx.stroke();
 	}
 
 	renderJudgeline(){
-		ctx.strokeStyle = renderSetting.stageColor[this.stage].highColor;
-		if(this.gameSetting.hp < 600) ctx.strokeStyle = renderSetting.stageColor[this.stage].normalColor;
-		if(this.gameSetting.hp < 100) ctx.strokeStyle = renderSetting.stageColor[this.stage].lowColor;
-		ctx.lineWidth = 20;
+		this.ctx.strokeStyle = renderSetting.stageColor[this.stage].highColor;
+		if(this.gameSetting.hp < 600) this.ctx.strokeStyle = renderSetting.stageColor[this.stage].normalColor;
+		if(this.gameSetting.hp < 100) this.ctx.strokeStyle = renderSetting.stageColor[this.stage].lowColor;
+		this.ctx.lineWidth = 20;
 
-		ctx.beginPath();
-		ctx.arc(this.gameSetting.centerX, this.gameSetting.centerY, this.gameSetting.playerRadius, 0, Math.PI * 2);
-		ctx.stroke();
+		this.ctx.beginPath();
+		this.ctx.arc(this.gameSetting.centerX, this.gameSetting.centerY, this.gameSetting.playerRadius, 0, Math.PI * 2);
+		this.ctx.stroke();
 	}
 
 	renderHUD(){
@@ -451,18 +453,18 @@ class Game extends EventEmitter{
 		//this.renderAmmo();
 		this.renderScore();
 		this.renderStage();
-		this.renderCrossHair();
 		this.renderJudgeline();
+		this.renderCrossHair();
 	}
 
 	render(){
 		if(this.gameStatus === STATUS_END) return;
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
 		this.renderBackground();
-		this.particles.renderParticle(ctx);
+		this.particles.renderParticle(this.ctx);
 		Object.values(this.objects).forEach((v) => renderSetting.renderer[v.type](v));
-		this.renderHUD();
+		if(!this.noDrawHud) this.renderHUD();
 
 		requestAnimationFrame(this.renderHandler);
 	}

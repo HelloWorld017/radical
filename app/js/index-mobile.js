@@ -13,14 +13,14 @@ if(match){
 		if(e){
 			$('.default-main').style.display = "none";
 			$('.controller-section').style.display = "block";
-			window.addEventListener('devicemotion', (ev) => {
+			/*window.addEventListener('devicemotion', (ev) => {
 				socket.emit('event', {
 					event: 'motion',
-					x: ev.accelerationIncludingGravity.x,
-					y: ev.accelerationIncludingGravity.y,
-					z: ev.accelerationIncludingGravity.z
+					x: ev.acceleration.x,
+					y: ev.acceleration.y,
+					z: ev.acceleration.z
 				});
-			});
+			});*/
 
 			window.addEventListener('deviceorientation', (ev) => {
 				socket.emit('event', {

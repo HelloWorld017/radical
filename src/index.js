@@ -15,7 +15,10 @@ const port = ((val) => {
 
 app.set('port', port);
 
+const RANKING_ENABLED = process.env.ranking === 'true';
+
 global.server = http.createServer(app);
+if(RANKING_ENABLED) global.ranking = require('./ranking');
 
 server.listen(port);
 server.on('error', (error) => {
@@ -46,4 +49,21 @@ server.on('listening', () => {
 const io = require('socket.io')(server);
 io.on('connection', (socket) => {
 	motion.bindSocket(socket);
+
+	socket.on('ranking enabled', () => {
+		socket.emit('ranking enabled', RANKING_ENABLED);
+	});
+
+	socket.on('ranking get', () => {
+		if(!RANKING_ENABLED) return;
+		socket.emit('ranking get', ranking.get());
+	});
+
+	socket.on('ranking push', (ev) => {
+		if(!RANKING_ENABLED) return;
+		if(!ev) return;
+		if(typeof ev.name !== 'string') return;
+		if(typeof ev.score !== 'number') return;
+		ranking.push(ev.name, ev.score);
+	});
 });
