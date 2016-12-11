@@ -2,18 +2,24 @@
 <html>
 	<head>
 		<%- include('header', {title: 'radical.index'}) %>
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<link rel="stylesheet" href="/NanumBarunGothic/nanumbarungothic.css">
 		<link rel="stylesheet" href="/css/mobile.css">
 	</head>
 	<body>
 		<section class="controller-section">
+			<h2>Controlling desktop...</h2>
+			<button type="button">화면꺼짐 방지</button>
 		</section>
 
 		<section class="default-main">
 			<header>
 				<h2>Radical</h2>
+				<p>데스크탑에서 들어가주세요!</p>
 			</header>
 		</section>
 
+		<script src="/nosleep/NoSleep.js"></script>
 		<script src="/js/radical-mobile.bundle.js"></script>
 	</body>
 </html>

@@ -1,8 +1,23 @@
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
 .controller-section {
 	background: #222;
+	width: 100vw;
+	height: 100vh;
 	display: none;
 }
 
 .default-main {
 	background: #00C0A0;
+	width: 100vw;
+	height: 100vh;
+}
+
+h2 {
+	color: #fff;
+	text-align: center;
+	font-family: 'Nanum Barun Gothic', sans-serif;
 }

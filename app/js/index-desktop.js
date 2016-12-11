@@ -37,6 +37,9 @@ socket.on('bind device', (e) => {
 	});
 	game.gameStart();
 
+	//TODO remove debug code
+	window.game = game;
+
 	game.on('next stage', () => {
 		stageHeader.innerHTML = "STAGE " + game.renderSetting.stageColor[game.stage].text;
 		stageDesc.innerHTML = game.renderSetting.stageColor[game.stage].summary;
@@ -46,8 +49,79 @@ socket.on('bind device', (e) => {
 		}, 4500);
 	});
 
+	game.on('damage', () => {
+		socket.emit('e', false);
+	});
+
 	game.on('game end', (score) => {
-		
+		console.log(score);
+		let handleGameEnd = () => {
+			stageHeader.style.marginTop = "20%";
+			stageHeader.innerHTML = "Thx for playing!";
+			stageIndicator.style.animationName = "fadein";
+			let left = 10;
+			let refresher = () => {
+				if(left <= 0){
+					location.reload();
+					return;
+				}
+				stageDesc.innerHTML = `Your score: ${score}
+				<br>
+				Refreshes in ${left}s...`;
+				left--;
+				setTimeout(refresher, 1000);
+			};
+			refresher();
+		};
+
+		let handleRanking = () => {
+			socket.emit('ranking get');
+			socket.on('ranking get', (ranking) => {
+				stageHeader.style.marginTop = "10%";
+				stageHeader.innerHTML = "LEADERBOARD";
+				stageIndicator.style.animationName = "fadein";
+				ranking = JSON.parse(ranking).map((v, k) => `${k}. ${v[0]} : ${v[1]}`).join('<br>');
+				let left = 10;
+				let ender = () => {
+					if(left <= 0){
+						handleGameEnd();
+						return;
+					}
+					stageDesc.innerHTML = `${ranking}
+					<br>
+					Proceeds in ${left}s...`;
+					left--;
+					setTimeout(ender, 1000);
+				};
+
+				ender();
+			});
+		};
+
+		socket.emit('ranking enabled');
+		socket.on('ranking enabled', (isEnabled) => {
+			if(isEnabled){
+				$('.score-input').style.animationName = "fadein";
+				$('.score-submit').addEventListener('click', () => {
+					let grade = $('.score-grade').value;
+					let classNumber = $('.score-class').value;
+					let name = $('.score-name').value;
+					if(classNumber.length < 2) classNumber = "0" + classNumber;
+					let final = grade + classNumber + ' ' + name;
+					if(!/^\d{3} [a-zA-Zㄱ-ㅎ가-힣0-9]{1,5}$/.test(final)){
+						return alert("정확하게 입력해주세요!");
+					}
+					socket.emit('ranking push', {
+						name: final,
+						score
+					});
+					$('.score-input').style.animationName = "fadeout";
+					setTimeout(() => {
+						handleRanking();
+					}, 500);
+				});
+			}else handleGameEnd();
+		});
 	});
 });
 

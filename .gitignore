@@ -32,5 +32,8 @@ npm-debug.log
 
 server.json
 
-#Webpack generated folder
+# Webpack generated folder
 dist
+
+# Ranking file
+ranking.json

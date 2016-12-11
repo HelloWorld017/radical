@@ -15,7 +15,7 @@ const port = ((val) => {
 
 app.set('port', port);
 
-const RANKING_ENABLED = process.env.ranking === 'true';
+const RANKING_ENABLED = process.env.RANKING === 'true';
 
 global.server = http.createServer(app);
 if(RANKING_ENABLED) global.ranking = require('./ranking');

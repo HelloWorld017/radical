@@ -33,3 +33,19 @@ if(match){
 
 	socket.emit('bind device', match[1]);
 }
+
+let noSleep = new NoSleep();
+
+const listener = () => {
+	noSleep.enable();
+	$('button').removeEventListener('click', listener, false);
+	$('button').removeEventListener('touchstart', listener, false);
+};
+
+$('button').addEventListener('touchstart', listener, false);
+$('button').addEventListener('click', listener, false);
+
+
+socket.on('e', () => {
+	if(window.navigator.vibrate) window.navigator.vibrate(200);
+});

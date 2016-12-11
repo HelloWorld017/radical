@@ -36,8 +36,24 @@
 				STAGE 1
 			</header>
 
+			<hr>
+			
 			<div class="stage-desc">
-				There are some games that you can't beat.
+				This is a piece of cake.
+			</div>
+		</section>
+
+		<section class="score-input">
+			<div class="score-inner">
+				<h1>당신의 이름을 입력하여 주세요!</h1>
+				<form onsubmit="return false;">
+					<input type="number" class="score-grade" placeholder="학년" maxlength="1" required>
+					<input type="number" class="score-class" placeholder="반" maxlength="2" required>
+					<input type="text" class="score-name" placeholder="이름" maxlength="5" required>
+					<button type="submit" class="score-submit">
+						등록
+					</button>
+				</form>
 			</div>
 		</section>
 		<script src="/js/radical-desktop.bundle.js"></script>

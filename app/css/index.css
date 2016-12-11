@@ -49,7 +49,9 @@ body, html {
 
 hr {
 	border: none;
+	margin: 100px auto;
 	padding: 18px 0;
+	max-width: 300px;
 	height: 6px;
 	background: url(/img/diagonal.png) repeat-x 0 center;
 	color: #333;
@@ -60,11 +62,11 @@ hr:after {
 	content: "◇";
 	display: inline-block;
 	position: relative;
+	color: #fff;
 	top: -0.5em;
 	font-size: 1.5em;
 	padding: 0 0.25em;
 	transform: rotate(-15deg);
-	background: #fff;
 }
 
 .background {
@@ -134,9 +136,59 @@ hr:after {
 
 .stage-desc {
 	color: #fff;
-	margin-top: 10rem;
-	font-family: Glegoo, serif;
+	font-family: Glegoo, 'Nanum Barun Gothic', serif;
 	text-align: center;
+}
+
+.score-inner {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.score-input {
+	z-index: 3;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0, 0, 0, 0.7);
+	display: table;
+	opacity: 0;
+	animation-timing-function: linear;
+	animation-fill-mode: forwards;
+	animation-duration: 500ms;
+	text-align: center;
+}
+
+.score-input h1 {
+	font-family: 'Nanum Barun Gothic', sans-serif;
+	color: #fff;
+}
+
+.score-input input {
+	border: 0;
+	padding: 10px;
+	border-bottom: 4px solid #00C0A0;
+}
+
+.score-input input[maxlength="2"], .score-input input[maxlength="1"] {
+	width: 50px;
+}
+
+.score-input input[maxlength="5"] {
+	width: 100px;
+}
+
+.score-input button {
+	background: #e0e0e0;
+	display: inline-block;
+	border: none;
+	padding: 12px 40px;
+	border-radius: 10px;
+	box-sizing: content-box;
+	color: #303030;
+	vertical-align: top;
 }
 
 #playground {
