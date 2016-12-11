@@ -23,6 +23,10 @@ previewGame.nextStage();
 previewGame.nextStage();
 previewGame.gameSetting.hp = Infinity;
 
+const stageIndicator = $('.stage-indicator');
+const stageHeader = $('.stage-header');
+const stageDesc = $('.stage-desc');
+
 socket.on('bind device', (e) => {
 	previewGame.gameEnd();
 	$('.index-view').remove();
@@ -32,28 +36,52 @@ socket.on('bind device', (e) => {
 		link: () => {}
 	});
 	game.gameStart();
+
+	game.on('next stage', () => {
+		stageHeader.innerHTML = "STAGE " + game.renderSetting.stageColor[game.stage].text;
+		stageDesc.innerHTML = game.renderSetting.stageColor[game.stage].summary;
+		stageIndicator.style.animationName = "fadein";
+		setTimeout(() => {
+			stageIndicator.style.animationName = "fadeout";
+		}, 4500);
+	});
+
+	game.on('game end', (score) => {
+		
+	});
 });
 
 let orientationBefore = undefined;
 
-socket.on('event', (e) => {
-	//if(e.event === 'motion'){
-	//	game.cursorX += Math.clamp(0, Math.round(e.z * MOTION_SENSITIVITY), game.gameSetting.width);
-	//	game.cursorY += Math.clamp(0, Math.round(e.x * MOTION_SENSITIVITY), game.gameSetting.height);
-	//}else
-	if(e.event === 'orientation'){
-		if(orientationBefore === undefined){
-			orientationBefore = e;
-			return;
-		}
+socket.on('e', (ev) => {
+	let e = {};
+	e.alpha = ev[0] * 255 + ev[1] + ev[2] / 100;
+	e.beta = ev[3] * 255 + ev[4] + ev[5] / 100;
 
-		let xAmount = orientationBefore.alpha - e.alpha;
-
-		if(180 < xAmount) xAmount = 360 - xAmount;
-		if(-180 > xAmount) xAmount = xAmount + 360;
-
-		game.cursorX = Math.clamp(0, game.cursorX + Math.round((xAmount) * ORIENTATION_SENSITIVITY), game.gameSetting.width);
-		game.cursorY = Math.clamp(0, game.cursorY + Math.round((orientationBefore.beta - e.beta) * ORIENTATION_SENSITIVITY), game.gameSetting.height);
+	if(orientationBefore === undefined){
 		orientationBefore = e;
+		return;
 	}
+
+	let xAmount = orientationBefore.alpha - e.alpha;
+
+	if(180 < xAmount) xAmount = 360 - xAmount;
+	if(-180 > xAmount) xAmount = xAmount + 360;
+
+	game.cursorX = Math.clamp(0, game.cursorX + Math.round((xAmount) * ORIENTATION_SENSITIVITY), game.gameSetting.width);
+	game.cursorY = Math.clamp(0, game.cursorY + Math.round((orientationBefore.beta - e.beta) * ORIENTATION_SENSITIVITY), game.gameSetting.height);
+	orientationBefore = e;
 });
+
+/*document.addEventListener('load', (e) => {
+	if(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement) $('.fullscreen').remove();
+
+	$('.fullscreen').addEventListener('click', (e) => {
+		$('.fullscreen').remove();
+		if(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement) return;
+
+		if(document.documentElement.requestFullscreen) return document.documentElement.requestFullscreen();
+		if(document.documentElement.mozRequestFullScreen) return document.documentElement.mozRequestFullScreen();
+		if(document.documentElement.webkitRequestFullscreen) return document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+	});
+});*/

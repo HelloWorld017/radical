@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include('header', {title: 'radical.developer'}) %>
+		<style>
+			/*
+				Museca font immitated by @shiftpsh
+				Available on http://shiftpsh.com/220600997910
+			*/
+
+			@font-face {
+				font-family: 'MUSECA';
+				src:	url('../font/museca.eot?#iefix') format('embedded-opentype'),
+						url('../font/museca.woff') format('woff'),
+						url('../font/museca.ttf') format('truetype'),
+						url('../font/museca.svg#MUSECA') format('svg');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			/*
+				Glegoo font by Eduardo Tunni
+				Available on https://fonts.google.com/specimen/Glegoo
+			*/
+			@font-face {
+				font-family: 'Glegoo';
+				src:	url('../font/glegoo.eot?#iefix') format('embedded-opentype'),
+						url('../font/glegoo.woff') format('woff'),
+						url('../font/glegoo.ttf') format('truetype'),
+						url('../font/glegoo.svg#Glegoo') format('svg');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			/*
+				Megrim font by Daniel Johnson
+				Available on https://fonts.google.com/specimen/Megrim
+			*/
+			@font-face {
+				font-family: 'Megrim';
+				src:	url('../font/megrim.eot?#iefix') format('embedded-opentype'),
+						url('../font/megrim.woff') format('woff'),
+						url('../font/megrim.woff2') format('woff2'),
+						url('../font/megrim.ttf') format('truetype'),
+						url('../font/megrim.svg#Megrim') format('svg');
+				font-weight: normal;
+				font-style: normal;
+			}
+
+			.staffroll {
+				font-family: 'Glegoo';
+				text-align: center;
+				animation-name: up;
+				animation-duration: 20s;
+				animation-fill-mode: forwards;
+				animation-timing-function: linear;
+				width: 100vw;
+				top: 750px;
+				left: 0;
+				position: fixed;
+			}
+
+			a {
+				color: #222;
+				font-family: MUSECA;
+				font-size: 20px;
+			}
+
+			@keyframes up {
+				from {
+					top: 750px;
+				}
+
+				to {
+					top: -450px;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="staffroll">
+			<h3>Game Developer: Khinenw(10307)</h3>
+			<h3>Motion Controller Developer: Khinenw(10307), onebone(10524)</h3>
+			<h3>Used fonts:</h3>
+			<p>
+				Museca font immitated by @shiftpsh<br>
+				Available on http://shiftpsh.com/220600997910
+			</p>
+			<p>
+				Glegoo font by Eduardo Tunni<br>
+				Available on https://fonts.google.com/specimen/Glegoo
+			</p>
+			<p>
+				Megrim font by Daniel Johnson<br>
+				Available on https://fonts.google.com/specimen/Megrim
+			</p>
+			<p>
+				NanumBarunGothic font by naver<br>
+				Available on http://hangeul.naver.com/2016/nanum
+			</p>
+			<h1 style="font-family: Megrim">Thank you for playing!</h1>
+			<a href="/">BACK</a>
+		</div>
+	</body>
+</html>

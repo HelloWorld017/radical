@@ -73,6 +73,17 @@ hr:after {
 	z-index: 2;
 }
 
+.developer {
+	position: fixed;
+	bottom: 10px;
+	right: 30px;
+	color: #fff;
+}
+
+.developer a {
+	color: #fff;
+}
+
 .logo-view {
 	width: 50%;
 	margin: 0 auto;
@@ -88,6 +99,8 @@ hr:after {
 }
 
 .messagebox h3 {
+	margin-top: 10px;
+	margin-bottom: 5px;
 	width: 100%;
 }
 
@@ -100,7 +113,30 @@ hr:after {
 }
 
 .stage-indicator {
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	z-index: 0;
+	background: rgba(0, 0, 0, 0.7);
 	opacity: 0;
+	animation-timing-function: linear;
+	animation-fill-mode: forwards;
+	animation-duration: 500ms;
+}
+
+.stage-header {
+	color: #fff;
+	font-family: MUSECA, sans-serif;
+	font-size: 100px;
+	text-align: center;
+	margin-top: 20%;
+}
+
+.stage-desc {
+	color: #fff;
+	margin-top: 10rem;
+	font-family: Glegoo, serif;
+	text-align: center;
 }
 
 #playground {

@@ -90,7 +90,8 @@ const renderSetting = {
 			normalColor		: '#ffd600',
 			lowColor		: '#ffea00',
 			defaultColor	: '#880e4f',
-			text			: '2'
+			text			: '2',
+			summary			: "Score +750\n Score x1.2"
 		},
 		3: {
 			bg				: '#004d40',
@@ -100,7 +101,8 @@ const renderSetting = {
 			normalColor		: '#64ffda',
 			lowColor		: '#b2dfdb',
 			defaultColor	: '#a7ffeb',
-			text			: '3'
+			text			: '3',
+			summary			: "Score +750\n Score x1.4"
 		},
 		4: {
 			bg				: '#1a237e',
@@ -110,7 +112,8 @@ const renderSetting = {
 			normalColor		: '#26c6da',
 			lowColor		: '#00bcd4',
 			defaultColor	: '#84ffff',
-			text			: '4'
+			text			: '4',
+			summary			: "Score +750\n Score x1.6"
 		},
 		5: {
 			bg				: '#212121',
@@ -121,7 +124,7 @@ const renderSetting = {
 			lowColor		: '#a0a0a0',
 			defaultColor	: '#8e8e8e',
 			text			: '∞',
-			summary			: "There is some games that you can't beat."
+			summary			: "There are some games that you can't beat."
 		}
 	},
 	renderer: {
@@ -244,11 +247,12 @@ class Game extends EventEmitter{
 		this.stage = 1;
 		this.score = 0;
 		this.lastId = 0;
-		this.cursorX = 640;
-		this.cursorY = 360;
+		this.cursorX = WIDTH / 2;
+		this.cursorY = HEIGHT / 2;
 		this.isFiring = false;
 		this.preHP = 0;
 		this.particles = new ParticleSystem();
+		this.renderSetting = renderSetting;
 
 		this.gameStatus = STATUS_START;
 
@@ -288,7 +292,7 @@ class Game extends EventEmitter{
 
 		this.tick++;
 
-		if(this.stage <= this.gameSetting.maxStage && this.tick > this.neededStageTime()){
+		if(this.stage < this.gameSetting.maxStage && this.tick > this.neededStageTime()){
 			this.nextStage();
 			setTimeout(this.tickHandler, renderSetting.nextStageAnimationTick);
 			return;
@@ -484,6 +488,7 @@ class Game extends EventEmitter{
 	}
 
 	gameEnd(){
+		this.emit('game end', this.gameSetting.score);
 		this.gameStatus = STATUS_END;
 	}
 }

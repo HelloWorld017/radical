@@ -13,22 +13,20 @@ if(match){
 		if(e){
 			$('.default-main').style.display = "none";
 			$('.controller-section').style.display = "block";
-			/*window.addEventListener('devicemotion', (ev) => {
-				socket.emit('event', {
-					event: 'motion',
-					x: ev.acceleration.x,
-					y: ev.acceleration.y,
-					z: ev.acceleration.z
-				});
-			});*/
 
 			window.addEventListener('deviceorientation', (ev) => {
-				socket.emit('event', {
-					event: 'orientation',
-					alpha: ev.alpha,
-					beta: ev.beta,
-					gamma: ev.gamma
-				});
+				let alphaInteger = Math.floor(ev.alpha);
+				let alphaLeft = Math.floor((ev.alpha - alphaInteger) * 100);
+				let betaInteger = Math.floor(ev.beta);
+				let betaLeft = Math.floor((ev.beta - betaInteger) * 100);
+				let buffer = new Uint8Array(6);
+				buffer[0] = Math.floor(alphaInteger / 256);
+				buffer[1] = alphaInteger % 256;
+				buffer[2] = alphaLeft;
+				buffer[3] = Math.floor(betaInteger / 256);
+				buffer[4] = betaInteger % 256;
+				buffer[5] = betaLeft;
+				socket.emit('e', buffer);
 			});
 		}
 	});
